@@ -1,0 +1,13 @@
+{
+  "DEBUG": true,
+  "log_settings":{
+    "LOG_FOLDER": "logs/",
+    "LOG_ROTATION": "100 MB",
+    "LOG_RETENTION": "30 days",
+    "LOG_ENCODING": "utf-8",
+    "LOG_BACKTRACE": true,
+    "LOG_DIAGNOSE": true,
+    "LOG_FORMAT": "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <magenta>{process}</magenta>:<yellow>{thread}</yellow> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<yellow>{line}</yellow> - <level>{message}</level>"
+  },
+  "table_prefix": "fx_"
+}
