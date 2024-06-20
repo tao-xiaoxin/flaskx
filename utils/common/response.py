@@ -79,15 +79,15 @@ class ErrorResponse(Response):
                          content_type=content_type, direct_passthrough=direct_passthrough)
 
 
-class StreamSuccessResponse(Response):
+class StreamResponse(Response):
     """
     专门用于流式输出的成功响应类。
-    StreamSuccessResponse(yield_function, param)或者StreamSuccessResponse(yield_function=yield_function, param=param)
+    StreamResponse(yield_function, args，kwargs)或者StreamResponse(yield_function=yield_function, args=args，kwargs=kwargs)
     默认headers包含适用于流式输出的设置。
     """
 
-    def __init__(self, yield_function, param, status=None, headers=None, mimetype="text/event-stream",
-                 content_type=None, direct_passthrough=False, *args, **kwargs):
+    def __init__(self, yield_function, args, kwargs, status=None, headers=None, mimetype="text/event-stream",
+                 content_type=None, direct_passthrough=False, ):
         # 定义默认的流式输出响应头
         default_headers = {
             'Content-Type': 'text/event-stream',
@@ -100,39 +100,10 @@ class StreamSuccessResponse(Response):
             default_headers.update(headers)
 
         # 使用stream_with_context包装yield_function
-        data = stream_with_context(yield_function(param))
+        data = stream_with_context(yield_function(*args, **kwargs))
 
         # 调用父类构造函数
         super().__init__(response=data, status=status, headers=headers, mimetype=mimetype,
-                         content_type=content_type, direct_passthrough=direct_passthrough)
-
-
-class StreamErrorResponse(Response):
-    """
-    用于流式输出的标准响应错误返回,StreamErrorResponse(stream_function, param)
-    默认错误码返回4000, 也可以指定其他返回码:StreamErrorResponse(code=xxx, stream_function, param)
-    """
-
-    def __init__(self, yield_function, param, code=400, msg='error', status=None, headers=None,
-                 mimetype="text/event-stream",
-                 content_type=None, direct_passthrough=False):
-        # 定义默认的流式输出响应头
-        default_headers = {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive',
-            'Access-Control-Allow-Origin': '*',
-        }
-        # 如果提供了额外的headers，则更新默认headers
-        if headers:
-            default_headers.update(headers)
-
-        # 使用stream_with_context包装yield_function
-        data = stream_with_context(yield_function(param))
-
-        # 调用父类构造函数
-        super().__init__(response=data, status=status, headers=headers,
-                         mimetype=mimetype,
                          content_type=content_type, direct_passthrough=direct_passthrough)
 
 
