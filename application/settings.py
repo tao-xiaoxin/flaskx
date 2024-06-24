@@ -2,8 +2,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from sqlalchemy.ext.declarative import declarative_base
-from application.urls import init_bps
-from utils.system.conf import load_config
 from configs.config import CONFIG_INFO
 
 # from utils.system.logs import log as logging

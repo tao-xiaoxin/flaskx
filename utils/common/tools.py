@@ -17,3 +17,40 @@ def import_module_from_path(module_path):
     except ImportError:
         # 如果导入失败，抛出一个异常，包含失败的模���路径
         raise Exception(f"Module {module_path} could not be imported.")
+
+
+class Dict(dict):
+    """
+    Config class that extends the built-in dict class in Python.
+    This class is used to create a dictionary object with additional methods for convenience.
+    """
+
+    def __init__(self, d=None):
+        super(Dict, self).__init__()
+        if d is None:
+            d = {}
+        for k, v in d.items():
+            self[k] = v
+
+    def __getitem__(self, key):
+        return super().__getitem__(key)
+
+    def __setitem__(self, key, value):
+        return super().__setitem__(key, value)
+
+    def __getattr__(self, key):
+        try:
+            value = self[key]
+            if isinstance(value, dict):
+                value = Dict(value)
+            return value
+        except KeyError:
+            raise AttributeError(f"'Dict' object has no attribute '{key}'")
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError as e:
+            return default
+        except Exception as e:
+            raise e
