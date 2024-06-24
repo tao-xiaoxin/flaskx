@@ -1,23 +1,24 @@
 import os
-import sys
 from pathlib import Path
 from datetime import timedelta
-from flask import Flask
-
+from sqlalchemy.ext.declarative import declarative_base
 from application.urls import init_bps
+from utils.system.conf import load_config
+from configs.config import CONFIG_INFO
+
+# from utils.system.logs import log as logging
+# from utils.system.logs import logru
+
+# from flask import app
+
 # from engine.mysql import MysqlEngine
 # from . import Base
 
-from middleware import CorsMiddleware, LoggingMiddleware
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# ================================================= #
-# ******************** 动态配置 ******************** #
-# ================================================= #
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "flaskx--z8%exyzt7e_%i@1+#1mm=%lb5=^fx_57=1@a+_y7bg5-w%)sm"
 
+Base = declarative_base()
 
 # 初始化plugins插件路径到环境变量中
 # PLUGINS_PATH = os.path.join(BASE_DIR, "plugins")
@@ -42,51 +43,72 @@ SECRET_KEY = "flaskx--z8%exyzt7e_%i@1+#1mm=%lb5=^fx_57=1@a+_y7bg5-w%)sm"
 # 初始化数据库引擎
 # db_engine = MysqlEngine("default")
 
-# def init_log(app):
-#
-#
-#     # 将日志处理器添加到 Flask 的主日志处理器中
-#     app.logger =
-#
-#     return app
 
+DEBUG = CONFIG_INFO.get('DEBUG', True)
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = CONFIG_INFO.get('SECRET_KEY', "flaskx--z8%exyzt7e_%i@1+#1mm=%lb5=^fx_57=1@a+_y7bg5-w%)sm")
 
-def init_middleware(app):
-    """
-    注册中间件
-    :param app:
-    :return:
-    """
-    CorsMiddleware(app)
-    LoggingMiddleware(app)
+# ================================================= #
+# ********************* 日志配置 ******************* #
+# ================================================= #
+# log 配置部分BEGIN
+log_settings = CONFIG_INFO.get('log_settings', {})
 
+LOG_FOLDER = log_settings.get('LOG_FOLDER', 'logs/')
+LOG_ROTATION = log_settings.get('LOG_ROTATION', '100 MB')
+LOG_RETENTION = log_settings.get('LOG_RETENTION', '30 days')
+LOG_ENCODING = log_settings.get('LOG_ENCODING', 'utf-8')
+LOG_BACKTRACE = log_settings.get('LOG_BACKTRACE', True)
+LOG_DIAGNOSE = log_settings.get('LOG_DIAGNOSE', True)
+# 格式:[日期][模块.函数名称():行号] [级别] 信息
+LOG_FORMAT = log_settings.get('LOG_FORMAT',
+                              '[%(asctime)s][%(name)s.%(funcName)s():%(lineno)d] [%(levelname)s] %(message)s')
 
-def init_db(app):
-    pass
+os.makedirs(os.path.join(BASE_DIR, LOG_FOLDER), exist_ok=True)
 
+# ================================================= #
+# ********************* 数据库配置 ******************* #
+# ================================================= #
 
-def init_plugs(app):
-    pass
+# JSON配置
+JSON_AS_ASCII = False
+POOL_SIZE = 10
+MAX_OVERFLOW = 20
+POOL_RECYCLE = 1800
+# SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{MYSQL_USERNAME}:{urlquote(MYSQL_PASSWORD)}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}?charset=utf8mb4"
 
+# 默认日志等级
+# LOG_LEVEL = logger.WARN
+"""
+flask-mail配置
+"""
+# MAIL_SERVER = 'smtp.qq.com'
+# MAIL_USE_TLS = False
+# MAIL_USE_SSL = True
+# MAIL_PORT = 465
+# MAIL_USERNAME = '123@qq.com'
+# MAIL_PASSWORD = 'XXXXX'  # 生成的授权码
+# MAIL_DEFAULT_SENDER = MAIL_USERNAME
 
-def init_script(app):
-    pass
+# 插件配置，填写插件的文件名名称，默认不启用插件。
+PLUGIN_ENABLE_FOLDERS = []
 
+# 配置多个数据库连接的连接串写法示例
+# HOSTNAME: 指数据库的IP地址、USERNAME：指数据库登录的用户名、PASSWORD：指数据库登录密码、PORT：指数据库开放的端口、DATABASE：指需要连接的数据库名称
+# MSSQL:    f"mssql+pymssql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=cp936"
+# MySQL:    f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8mb4"
+# Oracle:   f"oracle+cx_oracle://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}"
+# SQLite    "sqlite:/// database.db"
+# Postgres f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}"
+# Oracle的第二种连接方式
+# dsnStr = cx_Oracle.makedsn({HOSTNAME}, 1521, service_name='orcl')
+# connect_str = "oracle://%s:%s@%s" % ('{USERNAME}', ' {PASSWORD}', dsnStr)
 
-def create_app():
-    from configs.config import BaseConfig
-    app = Flask(BASE_DIR.name)
-    app.config["SECRET_KEY"] = SECRET_KEY
-    # 初始化配置
-    app.config.from_object(BaseConfig)
-    # 初始化数据库
-    init_db(app)
-    # 初始化中间件
-    init_middleware(app)
-    # 初始化插件
-    init_plugs(app)
-    # 初始化蓝图
-    init_bps(app)
-    # 初始化脚本
-    init_script(app)
-    return app
+#  在SQLALCHEMY_BINDS 中设置：'{数据库连接别名}': '{连接串}'
+# 最后在models的数据模型class中，在__tablename__前设置        __bind_key__ = '{数据库连接别名}'  即可，表示该数据模型不使用默认的数据库连接，改用“SQLALCHEMY_BINDS”中设置的其他数据库连接
+# SQLALCHEMY_BINDS = {
+#    'testMySQL': 'mysql+pymysql://test:123456@192.168.1.1:3306/test?charset=utf8',
+#    'testMsSQL': 'mssql+pymssql://test:123456@192.168.1.1:1433/test?charset=cp936',
+#    'testOracle': 'oracle+cx_oracle://test:123456@192.168.1.1:1521/test',
+#    'testSQLite': 'sqlite:///database.db'
+# }

@@ -1,2 +1,2 @@
-from .cors import CorsMiddleware
-from .logger import LoggingMiddleware
+from .logger.middleware import LoggingMiddleware
+from .cors.middleware import CorsMiddleware

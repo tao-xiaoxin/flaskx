@@ -1,26 +1,26 @@
 import logging, os
-import sys
-from configs.config import conf as config
+from application.settings import BASE_DIR, LOG_FOLDER, LOG_FORMAT
+from logging.config import dictConfig
 
-SERVER_LOGS_FILE = os.path.join(config.BASE_DIR, config.LOG_FOLDER, 'app.log')
-ERROR_LOGS_FILE = os.path.join(config.BASE_DIR, config.LOG_FOLDER, 'app.log')
+SERVER_LOGS_FILE = os.path.join(BASE_DIR, LOG_FOLDER, 'server.log')
+ERROR_LOGS_FILE = os.path.join(BASE_DIR, LOG_FOLDER, 'errors.log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format': config.LOG_FORMAT,
+            'format': LOG_FORMAT,
         },
         'console': {
-            'format': config.LOG_FORMAT,
+            'format': LOG_FORMAT,
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
         'file': {
-            'format': config.LOG_FORMAT,
+            'format': LOG_FORMAT,
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
         "error": {
-            'format': config.LOG_FORMAT,
+            'format': LOG_FORMAT,
             'datefmt': '%Y-%m-%d %H:%M:%S',
         }
     },
@@ -74,11 +74,14 @@ LOGGING = {
 }
 
 
-def get_logger():
-    log = logging.getLogger("log")
-    log.setLevel(logging.INFO)
-    return log
+def get_logger(name):
+    """
 
-
-# 日志句柄
-logger = get_logger()
+    :param name:
+    :return:
+    """
+    # 应用日志配置
+    dictConfig(LOGGING)
+    # 获取日志记录器
+    logger = logging.getLogger(name)
+    return logger

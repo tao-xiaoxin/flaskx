@@ -1,6 +1,9 @@
 {
   "DEBUG": true,
-  "log_settings":{
+  "SECRET_KEY": "flaskx--z8%exyzt7e_%i@1+#1mm=%lb5=^fx_57=1@a+_y7bg5-w%)sm",
+  "HOST": "0.0.0.0",
+  "PORT": "8000",
+  "log_settings": {
     "LOG_FOLDER": "logs/",
     "LOG_ROTATION": "100 MB",
     "LOG_RETENTION": "30 days",
@@ -9,5 +12,21 @@
     "LOG_DIAGNOSE": true,
     "LOG_FORMAT": "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <magenta>{process}</magenta>:<yellow>{thread}</yellow> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<yellow>{line}</yellow> - <level>{message}</level>"
   },
-  "table_prefix": "fx_"
+  "table_prefix": "fx_",
+  "DATABASES": {
+    "db1": {
+      "USER": "root",
+      "PASSWORD": "123456",
+      "HOST": "127.0.0.1",
+      "PORT": 3306,
+      "CHARSET": "utf8mb4"
+    },
+    "db2": {
+      "USER": "root",
+      "PASSWORD": "123456",
+      "HOST": "127.0.0.1",
+      "PORT": 3306,
+      "CHARSET": "utf8mb4"
+    }
+  }
 }

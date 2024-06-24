@@ -1,53 +1,53 @@
 import sys
-from configs import conf as config
-from loguru import logger as log
+from loguru import logger
+from application import settings
+
+# This code uses a hierarchical logging method, where lower-level log files will record all logs of higher levels.
+# This way, lower-level logs are the most abundant, and higher-level logs are fewer and more critical.
 
 
-def setup_logging():
-    """
+# Add a debug level logger
+logger.add(settings.LOG_FOLDER + "debug.log", level="DEBUG", backtrace=settings.LOG_BACKTRACE,
+           diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=False,
+           rotation=settings.LOG_ROTATION, retention=settings.LOG_RETENTION, encoding=settings.LOG_ENCODING,
+           filter=lambda record: record["level"].no >= logger.level(
+               "DEBUG").no)  # Only logs of level DEBUG or higher will be recorded
 
-    :return:
-    """
-    # 这里面采用了层次式的日志记录方式，就是低级日志文件会记录比他高的所有级别日志，这样可以做到低等级日志最丰富，高级别日志更少更关键
-    # debug
-    log.add(config.LOG_FOLDER + "debug.log", level="DEBUG", backtrace=config.LOG_BACKTRACE,
-            diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=False,
-            rotation=config.LOG_ROTATION, retention=config.LOG_RETENTION, encoding=config.LOG_ENCODING,
-            filter=lambda record: record["level"].no >= logger.level("DEBUG").no)
+# Add an info level logger
+logger.add(settings.LOG_FOLDER + "info.log", level="INFO", backtrace=settings.LOG_BACKTRACE,
+           diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=False,
+           rotation=settings.LOG_ROTATION, retention=settings.LOG_RETENTION, encoding=settings.LOG_ENCODING,
+           filter=lambda record: record["level"].no >= logger.level(
+               "INFO").no)  # Only logs of level INFO or higher will be recorded
 
-    # info
-    log.add(config.LOG_FOLDER + "info.log", level="INFO", backtrace=config.LOG_BACKTRACE,
-            diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=False,
-            rotation=config.LOG_ROTATION, retention=config.LOG_RETENTION, encoding=config.LOG_ENCODING,
-            filter=lambda record: record["level"].no >= logger.level("INFO").no)
+# Add a warning level logger
+logger.add(settings.LOG_FOLDER + "warning.log", level="WARNING", backtrace=settings.LOG_BACKTRACE,
+           diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=False,
+           rotation=settings.LOG_ROTATION, retention=settings.LOG_RETENTION, encoding=settings.LOG_ENCODING,
+           filter=lambda record: record["level"].no >= logger.level(
+               "WARNING").no)  # Only logs of level WARNING or higher will be recorded
 
-    # warning
-    log.add(config.LOG_FOLDER + "warning.log", level="WARNING", backtrace=config.LOG_BACKTRACE,
-            diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=False,
-            rotation=config.LOG_ROTATION, retention=config.LOG_RETENTION, encoding=config.LOG_ENCODING,
-            filter=lambda record: record["level"].no >= logger.level("WARNING").no)
+# Add an error level logger
+logger.add(settings.LOG_FOLDER + "error.log", level="ERROR", backtrace=settings.LOG_BACKTRACE,
+           diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=False,
+           rotation=settings.LOG_ROTATION, retention=settings.LOG_RETENTION, encoding=settings.LOG_ENCODING,
+           filter=lambda record: record["level"].no >= logger.level(
+               "ERROR").no)  # Only logs of level ERROR or higher will be recorded
 
-    # error
-    log.add(config.LOG_FOLDER + "error.log", level="ERROR", backtrace=config.LOG_BACKTRACE,
-            diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=False,
-            rotation=config.LOG_ROTATION, retention=config.LOG_RETENTION, encoding=config.LOG_ENCODING,
-            filter=lambda record: record["level"].no >= logger.level("ERROR").no)
+# Add a critical level logger
+logger.add(settings.LOG_FOLDER + "critical.log", level="CRITICAL", backtrace=settings.LOG_BACKTRACE,
+           diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=False,
+           rotation=settings.LOG_ROTATION, retention=settings.LOG_RETENTION, encoding=settings.LOG_ENCODING,
+           filter=lambda record: record["level"].no >= logger.level(
+               "CRITICAL").no)  # Only logs of level CRITICAL or higher will be recorded
 
-    # critical
-    log.add(config.LOG_FOLDER + "critical.log", level="CRITICAL", backtrace=config.LOG_BACKTRACE,
-            diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=False,
-            rotation=config.LOG_ROTATION, retention=config.LOG_RETENTION, encoding=config.LOG_ENCODING,
-            filter=lambda record: record["level"].no >= logger.level("CRITICAL").no)
-
-    log.add(sys.stderr, level="CRITICAL", backtrace=config.LOG_BACKTRACE, diagnose=config.LOG_DIAGNOSE,
-            format=config.LOG_FORMAT, colorize=True,
-            filter=lambda record: record["level"].no >= logger.level("CRITICAL").no)
-    return log
-
-
-logger = setup_logging()
+# Add a logger for critical level logs to stderr
+logger.add(sys.stderr, level="CRITICAL", backtrace=settings.LOG_BACKTRACE, diagnose=settings.LOG_DIAGNOSE,
+           format=settings.LOG_FORMAT, colorize=True,
+           filter=lambda record: record["level"].no >= logger.level(
+               "CRITICAL").no)  # Only logs of level CRITICAL or higher will be recorded

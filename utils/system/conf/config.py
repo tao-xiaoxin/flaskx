@@ -1,9 +1,6 @@
 # encoding:utf-8
 import json
-from utils.system.logs.logru import logger as logging
 import os
-import pickle
-import copy
 from utils.system.file import read_file, get_root
 
 
@@ -50,13 +47,13 @@ def load_config(config_path="./config.json"):
     :param config_path: 配置文件路径
     :return:
     """
-    print(config_path)
+    # from ..logs.logru import logger
     if not os.path.exists(config_path):
-        logging.info("配置文件不存在，将使用config-template.json模板")
+        # logger.info("配置文件不存在，将使用config-template.json模板")
         config_path = os.path.join(get_root(), "configs/config-template.json")
         if not os.path.exists(config_path):
             raise Exception("配置模板文件也不存在，请确保config-template.json文件存在于configs目录下")
-    logging.debug("[INIT] 当前配置文件为 {}".format(config_path))
+    # logger.debug("[INIT] 当前配置文件为 {}".format(config_path))
     config_str = read_file(config_path)
     # 将json字符串反序列化为dict类型
     config = Config(json.loads(config_str))
