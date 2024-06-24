@@ -52,16 +52,16 @@ SECRET_KEY = CONFIG_INFO.get('SECRET_KEY', "flaskx--z8%exyzt7e_%i@1+#1mm=%lb5=^f
 # ********************* 日志配置 ******************* #
 # ================================================= #
 # log 配置部分BEGIN
-log_settings = CONFIG_INFO.get('log_settings', {})
+LOG_SETTINGS = CONFIG_INFO.get('log_settings', {})
 
-LOG_FOLDER = log_settings.get('LOG_FOLDER', 'logs/')
-LOG_ROTATION = log_settings.get('LOG_ROTATION', '100 MB')
-LOG_RETENTION = log_settings.get('LOG_RETENTION', '30 days')
-LOG_ENCODING = log_settings.get('LOG_ENCODING', 'utf-8')
-LOG_BACKTRACE = log_settings.get('LOG_BACKTRACE', True)
-LOG_DIAGNOSE = log_settings.get('LOG_DIAGNOSE', True)
+LOG_FOLDER = LOG_SETTINGS.get('LOG_FOLDER', 'logs/')
+LOG_ROTATION = LOG_SETTINGS.get('LOG_ROTATION', '100 MB')
+LOG_RETENTION = LOG_SETTINGS.get('LOG_RETENTION', '30 days')
+LOG_ENCODING = LOG_SETTINGS.get('LOG_ENCODING', 'utf-8')
+LOG_BACKTRACE = LOG_SETTINGS.get('LOG_BACKTRACE', True)
+LOG_DIAGNOSE = LOG_SETTINGS.get('LOG_DIAGNOSE', True)
 # 格式:[日期][模块.函数名称():行号] [级别] 信息
-LOG_FORMAT = log_settings.get('LOG_FORMAT',
+LOG_FORMAT = LOG_SETTINGS.get('LOG_FORMAT',
                               '[%(asctime)s][%(name)s.%(funcName)s():%(lineno)d] [%(levelname)s] %(message)s')
 
 os.makedirs(os.path.join(BASE_DIR, LOG_FOLDER), exist_ok=True)
