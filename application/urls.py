@@ -1,4 +1,5 @@
 from flask import Blueprint
+from apps import hello
 
 
 def register_router(app, routers):
@@ -39,5 +40,5 @@ def init_bps(app):
     :param app:
     :return:
     """
-    # register_router()
+    app.register_blueprint(hello, url_prefix='/hello')
     return app
