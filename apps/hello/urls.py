@@ -5,6 +5,8 @@ from .views import index, IndexView
 hello = Blueprint('hello', __name__)
 
 hello.add_url_rule(rule='/', view_func=index, endpoint='index')
+# Make sure to export the 'hello' blueprint
+__all__ = ['hello']
 
 
 def init_blueprints(app):

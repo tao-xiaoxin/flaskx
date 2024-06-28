@@ -18,7 +18,6 @@ def create_app():
 def main():
     """Run administrative tasks."""
     app = create_app()
-    print(app.config)
     # Run the application
     app.run()
 

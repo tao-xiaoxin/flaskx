@@ -1,5 +1,5 @@
 from flask import Blueprint
-from apps import hello
+from apps.hello.urls import hello
 
 
 def register_router(app, routers):

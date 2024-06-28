@@ -1,9 +1,13 @@
+import json
 import os
 from pathlib import Path
 from datetime import timedelta
 from sqlalchemy.ext.declarative import declarative_base
-from configs.config import CONFIG_INFO
+from loguru import logger
+from utils.common.tools import Dict
+from utils.system.file import read_file
 
+# import configs.config as configs
 # from utils.system.logs import log as logging
 # from utils.system.logs import logru
 
@@ -17,6 +21,31 @@ from configs.config import CONFIG_INFO
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 Base = declarative_base()
+
+
+def load_config(config_path="./config.json"):
+    """
+    加载默认配置文件
+    :param config_path: 配置文件路径
+    :return:
+    """
+    if not os.path.exists(config_path):
+        logger.info("配置文件不存在，将使用config-template.json模板")
+        config_path = os.path.join(BASE_DIR, "configs/config-template.json")
+        if not os.path.exists(config_path):
+            raise Exception("配置模板文件也不存在，请确保config-template.json文件存在于configs目录下")
+    logger.debug("[INIT] 当前配置文件为 {}".format(config_path))
+    config_str = read_file(config_path)
+    # 将json字符串反序列化为dict类型
+    config = Dict(json.loads(config_str))
+    return config
+
+
+# 从环境变量读取配置文件路径
+CONFIG_PATH = os.getenv("CONFIG_PATH", "configs/config-template.json")
+
+# 读取配置文件
+CONFIG_INFO = load_config(config_path=CONFIG_PATH)
 
 # 初始化plugins插件路径到环境变量中
 # PLUGINS_PATH = os.path.join(BASE_DIR, "plugins")
